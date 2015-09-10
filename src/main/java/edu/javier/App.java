@@ -6,13 +6,12 @@ import edu.javier.model.Person;
 import edu.javier.util.JsonUtil;
 import spark.Response;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
+import java.util.Optional;
 import java.util.function.Supplier;
 
+import static edu.javier.App.RestExecutor.execute;
+import static edu.javier.util.JsonUtil.json;
 import static spark.Spark.*;
-import static edu.javier.util.JsonUtil.*;
 
 /**
  * Created by JavierAlonso on 08/09/2015.
@@ -26,36 +25,40 @@ public class App {
 
         port(8000);
 
-        get("/persons"
-                , (request, response) -> {
-            response.type("application/json");
-            return service.getAll();
-        }
+        get("/persons", (request, response) ->
+                execute(response, () -> {
+                    response.type("application/json");
+                    return service.getAll();
+                })
                 , json());
 
-        get("/persons/:id"
-                , (request, response) -> {
-            response.type("application/json");
-            return service.findById(Integer.valueOf(request.params(":id")));
-        }
+        get("/persons/:id", (request, response) ->
+                execute(response, () -> {
+                    Optional<Person> person = service.findById(Integer.valueOf(request.params(":id")));
+                    if (!person.isPresent()) {
+                        response.status(404);
+                    }
+                    response.type("application/json");
+                    return person;
+                })
                 , json());
 
-        post("/persons", "application/json", (request, response) -> RestExecutor.execute(response, () -> {
-                service.create(JsonUtil.toObject(request.body(), Person.class));
-                response.status(201);
-                return "";
-            })
+        post("/persons", "application/json", (request, response) -> execute(response, () -> {
+                    service.create(JsonUtil.toObject(request.body(), Person.class));
+                    response.status(201);
+                    return "";
+                })
         );
 
-        put("/persons/:id", "application/json", (request, response) -> RestExecutor.execute(response, () -> {
-                Person p = JsonUtil.toObject(request.body(), Person.class);
-                p.setId(Integer.valueOf(request.params(":id")));
-                service.edit(p);
-                return "";
-            })
+        put("/persons/:id", "application/json", (request, response) -> execute(response, () -> {
+                    Person p = JsonUtil.toObject(request.body(), Person.class);
+                    p.setId(Integer.valueOf(request.params(":id")));
+                    service.edit(p);
+                    return "";
+                })
         );
 
-        delete("/persons/:id", (request, response) -> RestExecutor.execute(response, () -> {
+        delete("/persons/:id", (request, response) -> execute(response, () -> {
             service.delete(Integer.valueOf(request.params(":id")));
             return "";
         }));
@@ -63,7 +66,7 @@ public class App {
     }
 
 
-    private static class RestExecutor {
+    public static class RestExecutor {
         public static Object execute(Response response, Supplier<Object> supplier) {
             try {
                 return supplier.get();
