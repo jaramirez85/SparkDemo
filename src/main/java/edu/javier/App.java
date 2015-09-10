@@ -3,7 +3,6 @@ package edu.javier;
 import edu.javier.bl.PersonService;
 import edu.javier.bl.PersonServiceImpl;
 import edu.javier.model.Person;
-import edu.javier.util.JsonUtil;
 import spark.Response;
 
 import java.util.Optional;
@@ -11,6 +10,7 @@ import java.util.function.Supplier;
 
 import static edu.javier.App.RestExecutor.execute;
 import static edu.javier.util.JsonUtil.json;
+import static edu.javier.util.JsonUtil.toObject;
 import static spark.Spark.*;
 
 /**
@@ -44,14 +44,14 @@ public class App {
                 , json());
 
         post("/persons", "application/json", (request, response) -> execute(response, () -> {
-                    service.create(JsonUtil.toObject(request.body(), Person.class));
+                    service.create(toObject(request.body(), Person.class));
                     response.status(201);
                     return "";
                 })
         );
 
         put("/persons/:id", "application/json", (request, response) -> execute(response, () -> {
-                    Person p = JsonUtil.toObject(request.body(), Person.class);
+                    Person p = toObject(request.body(), Person.class);
                     p.setId(Integer.valueOf(request.params(":id")));
                     service.edit(p);
                     return "";
