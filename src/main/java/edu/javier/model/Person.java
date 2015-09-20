@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Person {
 
-    private int id;
+    private UUID id;
     private String name;
     private int age;
 
@@ -17,11 +17,11 @@ public class Person {
         this.age = age;
     }
 
-    public int getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

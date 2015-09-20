@@ -5,7 +5,10 @@ import edu.javier.bl.PersonServiceImpl;
 import edu.javier.model.Person;
 import spark.Response;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static edu.javier.App.RestExecutor.execute;
@@ -34,7 +37,7 @@ public class App {
 
         get("/persons/:id", (request, response) ->
                 execute(response, () -> {
-                    Optional<Person> person = service.findById(Integer.valueOf(request.params(":id")));
+                    Optional<Person> person = service.findById(UUID.fromString(request.params(":id")));
                     if (!person.isPresent()) {
                         response.status(404);
                     }
@@ -44,22 +47,25 @@ public class App {
                 , json());
 
         post("/persons", "application/json", (request, response) -> execute(response, () -> {
-                    service.create(toObject(request.body(), Person.class));
+                    response.type("application/json");
+                    UUID newId = service.create(toObject(request.body(), Person.class));
                     response.status(201);
-                    return "";
-                })
-        );
+                    Map<String, UUID> map = new HashMap<>();
+                    map.put("id", newId);
+                    return map;
+                }),
+                json());
 
         put("/persons/:id", "application/json", (request, response) -> execute(response, () -> {
                     Person p = toObject(request.body(), Person.class);
-                    p.setId(Integer.valueOf(request.params(":id")));
+                    p.setId(UUID.fromString(request.params(":id")));
                     service.edit(p);
                     return "";
                 })
         );
 
         delete("/persons/:id", (request, response) -> execute(response, () -> {
-            service.delete(Integer.valueOf(request.params(":id")));
+            service.delete(UUID.fromString(request.params(":id")));
             return "";
         }));
 

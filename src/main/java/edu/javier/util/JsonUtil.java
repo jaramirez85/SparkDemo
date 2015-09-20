@@ -2,7 +2,10 @@ package edu.javier.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import spark.ResponseTransformer;
+
+import java.util.Map;
 
 /**
  * Created by JavierAlonso on 08/09/2015.
@@ -10,7 +13,7 @@ import spark.ResponseTransformer;
 public class JsonUtil {
 
     public static String toJson(Object object) {
-        return new Gson().toJson(object);
+        return new GsonBuilder().create().toJson(object);
     }
 
     public static <T> T toObject(String jsonString, Class<T> clazz) {

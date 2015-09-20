@@ -11,10 +11,10 @@ import java.util.UUID;
  */
 public interface PersonService {
 
-    void create(Person p);
+    UUID create(Person p);
     void edit(Person p);
-    Optional<Person> findById(int id);
+    Optional<Person> findById(UUID id);
     List<Person> getAll();
-    void delete(int id);
+    void delete(UUID id);
 
 }
