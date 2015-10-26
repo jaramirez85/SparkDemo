@@ -28,14 +28,14 @@ public class App {
 
         port(8000);
 
-        get("/persons", (request, response) ->
+        get("/api/persons", (request, response) ->
                 execute(response, () -> {
                     response.type("application/json");
                     return service.getAll();
                 })
                 , json());
 
-        get("/persons/:id", (request, response) ->
+        get("/api/persons/:id", (request, response) ->
                 execute(response, () -> {
                     Optional<Person> person = service.findById(UUID.fromString(request.params(":id")));
                     if (!person.isPresent()) {
@@ -46,7 +46,7 @@ public class App {
                 })
                 , json());
 
-        post("/persons", "application/json", (request, response) -> execute(response, () -> {
+        post("/api/persons", "application/json", (request, response) -> execute(response, () -> {
                     response.type("application/json");
                     UUID newId = service.create(toObject(request.body(), Person.class));
                     response.status(201);
@@ -56,7 +56,7 @@ public class App {
                 }),
                 json());
 
-        put("/persons/:id", "application/json", (request, response) -> execute(response, () -> {
+        put("/api/persons/:id", "application/json", (request, response) -> execute(response, () -> {
                     Person p = toObject(request.body(), Person.class);
                     p.setId(UUID.fromString(request.params(":id")));
                     service.edit(p);
@@ -64,7 +64,7 @@ public class App {
                 })
         );
 
-        delete("/persons/:id", (request, response) -> execute(response, () -> {
+        delete("/api/persons/:id", (request, response) -> execute(response, () -> {
             service.delete(UUID.fromString(request.params(":id")));
             return "";
         }));
