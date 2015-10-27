@@ -13,7 +13,10 @@ import java.util.Map;
 public class JsonUtil {
 
     public static String toJson(Object object) {
-        return new GsonBuilder().create().toJson(object);
+        if(object != null){
+            return new GsonBuilder().create().toJson(object);
+        }
+        return null;
     }
 
     public static <T> T toObject(String jsonString, Class<T> clazz) {

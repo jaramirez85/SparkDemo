@@ -23,7 +23,7 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public void edit(Person p) {
-        persons.putIfAbsent(p.getId(),p);
+        persons.put(p.getId(),p);
     }
 
     @Override
