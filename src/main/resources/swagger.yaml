@@ -1,0 +1,136 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: '**SOAP UI Demo**'
+host: localhost:8000
+basePath: /api
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json  
+paths:
+  /persons:
+    post:
+      description: |
+        Crea un objeto `Person`.
+      parameters:
+        - name: person
+          in: body
+          description: Persona a crear
+          required: true
+          schema:
+            $ref: '#/definitions/Person'        
+      responses:
+        '201':
+          description: persona creada satisfactoriamente
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/errorModel'              
+    get:
+      description: |
+        Consulta todos los objetos `Person`.
+      responses:
+        '200':
+          description: An array of products
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Person'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/errorModel'               
+  /persons/{id}:
+    get:
+      description: |
+        Consulta una `Person` por ID.
+      parameters:
+        - name: id
+          in: path
+          description: id de la persona
+          required: true
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Persona consultada
+          schema:
+            $ref: '#/definitions/Person'          
+        '404':
+          description: No existe la persona con ese ID
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/errorModel'           
+    put:
+      description: |
+        Edita una `Person`.
+      parameters:
+        - name: id
+          in: path
+          description: id de la persona a editar
+          required: true
+          type: string
+          format: uuid
+        - name: person
+          in: body
+          description: Persona con loa atributos a editar
+          required: true
+          schema:
+            $ref: '#/definitions/Person'           
+      responses:
+        '200':
+          description: Persona editada satisfactoriamente
+        '404':
+          description: No existe la persona con ese ID   
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/errorModel'           
+    delete:
+      description: |
+        Remueve una `Person`.
+      parameters:
+        - name: id
+          in: path
+          description: id de la persona a eliminar
+          required: true
+          type: string
+          format: uuid          
+      responses:
+        '200':
+          description: Persona eliminada satisfactoriamente
+        '404':
+          description: No existe la persona con ese ID 
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/errorModel'           
+definitions:
+  Person:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: Id.
+      name:
+        type: string
+        description: Nombre.
+      age:
+        type: integer
+        description: Edad.  
+  errorModel:
+    type: object
+    properties:
+      message:
+        type: string
